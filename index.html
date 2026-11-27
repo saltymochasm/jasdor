@@ -1,19 +1,317 @@
+
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#f7f4ef"><title>Jasdor — Pesan favoritmu</title><link rel="stylesheet" href="/styles.css">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f7f4ef">
+<title>Jasdor — Pesan favoritmu</title>
+<link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-<header class="topbar"><a class="brandmark" href="/">jasdor<span>.</span></a><nav><a href="#brands">Brand</a><a href="#catalog">Menu</a><button id="adminOpen" class="nav-admin">Admin</button><button id="cartOpen" class="cart-pill">Keranjang <b id="cartCount">0</b></button></nav></header>
+
+<header class="topbar">
+  <a class="brandmark" href="/">jasdor<span>.</span></a>
+  <nav>
+    <a href="#brands">Brand</a>
+    <a href="#catalog">Menu</a>
+    <button id="adminOpen" class="nav-admin">Admin</button>
+    <button id="cartOpen" class="cart-pill">Keranjang <b id="cartCount">0</b></button>
+  </nav>
+</header>
+
 <main>
-<section class="hero"><div><span class="eyebrow">ORDER FAVORIT, LEBIH MUDAH</span><h1>Temukan yang kamu suka.<br><em>Pesan tanpa ribet.</em></h1><p>Pilih brand, tentukan menu dan custom pesananmu. Checkout langsung melalui WhatsApp.</p><a class="primary" href="#brands">Mulai pesan <span>↗</span></a></div><div class="hero-art"><div class="art-circle"></div><div class="art-card"><span>JASDOR PICK</span><strong>Good<br>mood<br>in a cup.</strong><small>your order, your way.</small></div><div class="art-sticker">ORDER<br>HAPPY ✳</div></div></section>
-<section id="brands" class="section"><div class="section-head"><div><span class="eyebrow">01 / PILIH BRAND</span><h2>Mulai dari brand favoritmu</h2></div><span class="muted" id="brandTotal"></span></div><div id="brandList" class="brand-grid"></div></section>
-<section id="catalog" class="section catalog-section"><div class="section-head"><div><span class="eyebrow">02 / KATALOG MENU</span><h2 id="catalogTitle">Menu pilihan</h2><p class="muted" id="catalogSub">Pilih brand untuk melihat menu yang tersedia.</p></div></div><div class="catalog-tools"><input id="search" placeholder="Cari menu favoritmu…"><div id="categoryList" class="chips"></div></div><div id="productList" class="product-grid"><div class="empty">Pilih salah satu brand untuk mulai melihat menu.</div></div></section>
-<section class="how"><span class="eyebrow">PESAN DALAM 3 LANGKAH</span><div class="how-grid"><div><b>01</b><h3>Pilih brand & menu</h3><p>Jelajahi katalog dari berbagai brand.</p></div><div><b>02</b><h3>Atur pesanan</h3><p>Pilih ukuran, add-on, jumlah, dan catatan.</p></div><div><b>03</b><h3>Kirim ke WhatsApp</h3><p>Pesanan tersusun otomatis untuk admin.</p></div></div></section>
+  <section class="hero">
+    <div>
+      <span class="eyebrow">ORDER FAVORIT, LEBIH MUDAH</span>
+      <h1>Temukan yang kamu suka.<br><em>Pesan tanpa ribet.</em></h1>
+      <p>Pilih brand, tentukan menu dan custom pesananmu. Checkout langsung melalui WhatsApp.</p>
+      <a class="primary" href="#brands">Mulai pesan <span>↗</span></a>
+    </div>
+    <div class="hero-art">
+      <div class="art-circle"></div>
+      <div class="art-card">
+        <span>JASDOR PICK</span>
+        <strong>Good<br>mood<br>in a cup.</strong>
+        <small>your order, your way.</small>
+      </div>
+      <div class="art-sticker">ORDER<br>HAPPY ✳</div>
+    </div>
+  </section>
+
+  <section id="brands" class="section">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">01 / PILIH BRAND</span>
+        <h2>Mulai dari brand favoritmu</h2>
+      </div>
+      <span class="muted" id="brandTotal"></span>
+    </div>
+    <div id="brandList" class="brand-grid"></div>
+  </section>
+
+  <section id="catalog" class="section catalog-section">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow">02 / KATALOG MENU</span>
+        <h2 id="catalogTitle">Menu pilihan</h2>
+        <p class="muted" id="catalogSub">Pilih brand untuk melihat menu yang tersedia.</p>
+      </div>
+    </div>
+    <div class="catalog-tools">
+      <input id="search" placeholder="Cari menu favoritmu…">
+      <div id="categoryList" class="chips"></div>
+    </div>
+    <div id="productList" class="product-grid">
+      <div class="empty">Pilih salah satu brand untuk mulai melihat menu.</div>
+    </div>
+  </section>
+
+  <section class="how">
+    <span class="eyebrow">PESAN DALAM 3 LANGKAH</span>
+    <div class="how-grid">
+      <div>
+        <b>01</b>
+        <h3>Pilih brand & menu</h3>
+        <p>Jelajahi katalog dari berbagai brand.</p>
+      </div>
+      <div>
+        <b>02</b>
+        <h3>Atur pesanan</h3>
+        <p>Pilih ukuran, add-on, jumlah, dan catatan.</p>
+      </div>
+      <div>
+        <b>03</b>
+        <h3>Kirim ke WhatsApp</h3>
+        <p>Pesanan tersusun otomatis untuk admin.</p>
+      </div>
+    </div>
+  </section>
 </main>
-<footer><a class="brandmark" href="/">jasdor<span>.</span></a><span>Pesan lebih mudah, nikmati lebih cepat.</span><small>© <span id="year"></span> Jasdor</small></footer>
-<div id="productModal" class="overlay hidden"><div class="sheet"><button class="close" data-close="productModal">×</button><div id="productDetail"></div></div></div>
-<div id="cartModal" class="overlay hidden"><div class="sheet"><button class="close" data-close="cartModal">×</button><span class="eyebrow">RINGKASAN PESANAN</span><h2>Keranjangmu</h2><div id="cartItems"></div><div class="checkout-form"><label>Nama pemesan<input id="customerName" placeholder="Nama kamu"></label><label>Nomor WhatsApp (opsional)<input id="customerPhone" placeholder="08xxxxxxxxxx"></label><label>Outlet<select id="outletSelect"><option value="">Pilih outlet (jika tersedia)</option></select></label><label>Waktu pickup<select id="pickup"><option>Sekarang</option><option>Atur jam</option></select></label><label id="pickupTimeWrap" class="hidden">Jam pickup<input id="pickupTime" type="time"></label><label>Catatan pesanan<textarea id="orderNote" placeholder="Catatan tambahan untuk admin"></textarea></label></div><div class="total-line"><span>Total</span><strong id="cartTotal">Rp0</strong></div><button id="sendOrder" class="primary full">Kirim pesanan via WhatsApp ↗</button><p class="fineprint">Pesanan akan dibuka di WhatsApp. Periksa kembali sebelum mengirim.</p></div></div>
-<div id="adminModal" class="overlay hidden"><div class="sheet admin-sheet"><button class="close" data-close="adminModal">×</button><span class="eyebrow">AREA PENGELOLA</span><h2>Dashboard Jasdor</h2><div id="adminLogin"><p class="muted">Masuk untuk mengelola brand, menu, promo, dan outlet.</p><label>Password admin<input id="adminPassword" type="password" placeholder="Masukkan password"></label><button id="loginBtn" class="primary full">Masuk dashboard</button><p id="loginError" class="error"></p></div><div id="adminPanel" class="hidden"><div class="admin-tabs"><button class="active" data-tab="brandsAdmin">Brand</button><button data-tab="productsAdmin">Menu</button><button data-tab="outletsAdmin">Outlet</button></div><section id="brandsAdmin" class="admin-tab"><h3>Tambah brand</h3><form id="brandForm" class="admin-form"><input name="name" placeholder="Nama brand" required><input name="slug" placeholder="slug-brand" required><input name="logo" placeholder="URL logo (opsional)"><input name="color" placeholder="Warna aksen, contoh #76533f"><input name="whatsapp" placeholder="Nomor WhatsApp admin, contoh 62812…" required><textarea name="description" placeholder="Deskripsi singkat"></textarea><button class="primary">Simpan brand</button></form><div id="adminBrandList"></div></section><section id="productsAdmin" class="admin-tab hidden"><h3>Tambah menu</h3><form id="productForm" class="admin-form"><select name="brand_id" required></select><input name="name" placeholder="Nama menu" required><input name="category" placeholder="Kategori, contoh Coffee"><input name="price" type="number" min="0" placeholder="Harga (angka)" required><input name="compare_price" type="number" min="0" placeholder="Harga sebelum diskon (opsional)"><input name="image" placeholder="URL foto menu"><textarea name="description" placeholder="Deskripsi menu"></textarea><input name="options" placeholder="Opsi, pisahkan koma (Regular, Large:5000)"><input name="addons" placeholder="Add-on, contoh Extra shot:6000, Oreo:4000"><label class="inline"><input name="active" type="checkbox" checked> Menu aktif</label><button class="primary">Simpan menu</button></form><div id="adminProductList"></div></section><section id="outletsAdmin" class="admin-tab hidden"><h3>Tambah outlet</h3><form id="outletForm" class="admin-form"><select name="brand_id" required></select><input name="name" placeholder="Nama outlet" required><input name="address" placeholder="Alamat outlet"><input name="hours" placeholder="Jam operasional, contoh 09.00–22.00"><button class="primary">Simpan outlet</button></form><div id="adminOutletList"></div></section><button id="logoutBtn" class="secondary full">Keluar dashboard</button></div></div></div>
-<div id="toast" class="toast"></div><script src="/app.js"></script>
-</body></html>
+
+<footer>
+  <a class="brandmark" href="/">jasdor<span>.</span></a>
+  <span>Pesan lebih mudah, nikmati lebih cepat.</span>
+  <small>© <span id="year"></span> Jasdor</small>
+</footer>
+
+<!-- PRODUCT MODAL -->
+<div id="productModal" class="overlay hidden">
+  <div class="sheet">
+    <button class="close" data-close="productModal">×</button>
+    <div id="productDetail"></div>
+  </div>
+</div>
+
+<!-- CART MODAL -->
+<div id="cartModal" class="overlay hidden">
+  <div class="sheet">
+    <button class="close" data-close="cartModal">×</button>
+    <span class="eyebrow">RINGKASAN PESANAN</span>
+    <h2>Keranjangmu</h2>
+    <div id="cartItems"></div>
+
+    <div class="checkout-form">
+      <label>Nama pemesan
+        <input id="customerName" placeholder="Nama kamu">
+      </label>
+      <label>Nomor WhatsApp (opsional)
+        <input id="customerPhone" placeholder="08xxxxxxxxxx">
+      </label>
+      <label>Outlet
+        <select id="outletSelect">
+          <option value="">Pilih outlet (jika tersedia)</option>
+        </select>
+      </label>
+      <label>Waktu pickup
+        <select id="pickup">
+          <option>Sekarang</option>
+          <option>Atur jam</option>
+        </select>
+      </label>
+      <label id="pickupTimeWrap" class="hidden">Jam pickup
+        <input id="pickupTime" type="time">
+      </label>
+      <label>Catatan pesanan
+        <textarea id="orderNote" placeholder="Catatan tambahan untuk admin"></textarea>
+      </label>
+    </div>
+
+    <div class="total-line">
+      <span>Total</span>
+      <strong id="cartTotal">Rp0</strong>
+    </div>
+    <button id="sendOrder" class="primary full">Kirim pesanan via WhatsApp ↗</button>
+    <p class="fineprint">Pesanan akan dibuka di WhatsApp. Periksa kembali sebelum mengirim.</p>
+  </div>
+</div>
+
+<!-- ADMIN MODAL -->
+<div id="adminModal" class="overlay hidden">
+  <div class="sheet admin-sheet">
+    <button class="close" data-close="adminModal">×</button>
+    <span class="eyebrow">AREA PENGELOLA</span>
+    <h2>Dashboard Jasdor</h2>
+
+    <div id="adminLogin">
+      <p class="muted">Masuk untuk mengelola brand, menu, promo, dan outlet.</p>
+      <label>Password admin
+        <input id="adminPassword" type="password" placeholder="Masukkan password">
+      </label>
+      <button id="loginBtn" class="primary full">Masuk dashboard</button>
+      <p id="loginError" class="error"></p>
+    </div>
+
+    <div id="adminPanel" class="hidden">
+
+      <!-- ADMIN NAVIGATION -->
+      <div class="admin-tabs">
+        <button class="active" data-tab="brandsAdmin">Brand</button>
+        <button data-tab="productsAdmin">Menu</button>
+        <button data-tab="optionsAdmin">Options</button>
+        <button data-tab="addonsAdmin">Add-ons</button>
+        <button data-tab="outletsAdmin">Outlet</button>
+      </div>
+
+      <!-- BRANDS -->
+      <section id="brandsAdmin" class="admin-tab">
+        <h3>Tambah brand</h3>
+        <form id="brandForm" class="admin-form">
+          <input name="name" placeholder="Nama brand" required>
+          <input name="slug" placeholder="slug-brand" required>
+          <input name="logo" placeholder="URL logo (opsional)">
+          <input name="color" placeholder="Warna aksen, contoh #76533f">
+          <input name="whatsapp" placeholder="Nomor WhatsApp admin, contoh 62812…" required>
+          <textarea name="description" placeholder="Deskripsi singkat"></textarea>
+          <button class="primary">Simpan brand</button>
+        </form>
+        <div id="adminBrandList"></div>
+      </section>
+
+      <!-- PRODUCTS -->
+      <section id="productsAdmin" class="admin-tab hidden">
+        <h3>Tambah menu</h3>
+        <form id="productForm" class="admin-form">
+          <select name="brand_id" required></select>
+          <input name="name" placeholder="Nama menu" required>
+          <input name="category" placeholder="Kategori, contoh Coffee">
+          <input name="price" type="number" min="0" placeholder="Harga (angka)" required>
+          <input name="compare_price" type="number" min="0" placeholder="Harga sebelum diskon (opsional)">
+          <input name="image" placeholder="URL foto menu">
+          <textarea name="description" placeholder="Deskripsi menu"></textarea>
+          <input name="options" placeholder="Opsi, pisahkan koma (Regular, Large:5000)">
+          <input name="addons" placeholder="Add-on, contoh Extra shot:6000, Oreo:4000">
+          <label class="inline">
+            <input name="active" type="checkbox" checked> Menu aktif
+          </label>
+          <button class="primary">Simpan menu</button>
+        </form>
+        <div id="adminProductList"></div>
+      </section>
+
+      <!-- OPTIONS -->
+      <section id="optionsAdmin" class="admin-tab hidden">
+        <h3>Kelola Options</h3>
+        <p class="muted">Buat grup pilihan dan nilai yang dapat digunakan pada produk.</p>
+
+        <h4>Tambah grup Options</h4>
+        <form id="optionGroupForm" class="admin-form">
+          <select name="brand_id" required>
+            <option value="">Pilih brand</option>
+          </select>
+          <input name="group_name" placeholder="Nama grup, contoh Size" required>
+
+          <label>Tipe pilihan</label>
+          <select name="selection_type">
+            <option value="SINGLE">Pilih satu</option>
+            <option value="MULTIPLE">Bisa pilih beberapa</option>
+          </select>
+
+          <label class="inline">
+            <input name="is_required" type="checkbox">
+            Wajib dipilih
+          </label>
+
+          <input name="min_select" type="number" min="0" value="0" placeholder="Minimal pilihan">
+          <input name="max_select" type="number" min="0" placeholder="Maksimal pilihan (kosong = tanpa batas)">
+          <input name="display_order" type="number" value="0" placeholder="Urutan tampil">
+          <textarea name="description" placeholder="Keterangan grup (opsional)"></textarea>
+          <button class="primary">Simpan grup Options</button>
+        </form>
+
+        <h4>Tambah nilai Option</h4>
+        <form id="optionItemForm" class="admin-form">
+          <select name="group_id" required>
+            <option value="">Pilih grup Options</option>
+          </select>
+          <input name="item_name" placeholder="Nama pilihan, contoh Large" required>
+          <input name="price_delta" type="number" min="0" value="0" placeholder="Biaya tambahan">
+          <input name="sort_order" type="number" value="0" placeholder="Urutan tampil">
+          <button class="primary">Simpan nilai Option</button>
+        </form>
+
+        <div id="adminOptionList"></div>
+      </section>
+
+      <!-- ADD-ONS -->
+      <section id="addonsAdmin" class="admin-tab hidden">
+        <h3>Kelola Add-ons</h3>
+        <p class="muted">Buat grup tambahan dan item yang dapat dipilih pelanggan.</p>
+
+        <h4>Tambah grup Add-ons</h4>
+        <form id="addonGroupForm" class="admin-form">
+          <select name="brand_id" required>
+            <option value="">Pilih brand</option>
+          </select>
+          <input name="group_name" placeholder="Nama grup, contoh Topping" required>
+
+          <label>Tipe pilihan</label>
+          <select name="selection_type">
+            <option value="MULTIPLE">Bisa pilih beberapa</option>
+            <option value="SINGLE">Pilih satu</option>
+          </select>
+
+          <input name="min_select" type="number" min="0" value="0" placeholder="Minimal pilihan">
+          <input name="max_select" type="number" min="0" placeholder="Maksimal pilihan (kosong = tanpa batas)">
+          <input name="display_order" type="number" value="0" placeholder="Urutan tampil">
+          <textarea name="description" placeholder="Keterangan grup (opsional)"></textarea>
+          <button class="primary">Simpan grup Add-ons</button>
+        </form>
+
+        <h4>Tambah item Add-on</h4>
+        <form id="addonItemForm" class="admin-form">
+          <select name="group_id" required>
+            <option value="">Pilih grup Add-ons</option>
+          </select>
+          <input name="item_name" placeholder="Nama item, contoh Extra Shot" required>
+          <input name="price_delta" type="number" min="0" value="0" placeholder="Harga tambahan">
+          <input name="sort_order" type="number" value="0" placeholder="Urutan tampil">
+          <button class="primary">Simpan item Add-on</button>
+        </form>
+
+        <div id="adminAddonList"></div>
+      </section>
+
+      <!-- OUTLETS -->
+      <section id="outletsAdmin" class="admin-tab hidden">
+        <h3>Tambah outlet</h3>
+        <form id="outletForm" class="admin-form">
+          <select name="brand_id" required></select>
+          <input name="name" placeholder="Nama outlet" required>
+          <input name="address" placeholder="Alamat outlet">
+          <input name="hours" placeholder="Jam operasional, contoh 09.00–22.00">
+          <button class="primary">Simpan outlet</button>
+        </form>
+        <div id="adminOutletList"></div>
+      </section>
+
+      <button id="logoutBtn" class="secondary full">Keluar dashboard</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script src="/app.js"></script>
+</body>
+</html>

@@ -1,6 +1,9 @@
+
 name = "jasdor"
-compatibility_date = "2026-11-24"
+compatibility_date = "2026-11-27"
 pages_build_output_dir = "."
 
-# Binding D1 "DB" sudah dibuat pada Cloudflare Pages Dashboard.
-# Jangan menambahkan database_id placeholder di sini.
+[[d1_databases]]
+binding = "DB"
+database_name = "jasdor-db"
+database_id = "b7588474-f0c3-4125-a269-0abfc488bf1a"

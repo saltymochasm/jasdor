@@ -1,9 +1,5 @@
 
-const demo = {
-  brands: [],
-  products: [],
-  outlets: []
-};
+const demo = { brands: [], products: [], outlets: [] };
 
 let data = demo;
 let selectedBrand = null;
@@ -88,7 +84,6 @@ async function load() {
   renderBrands();
   renderProducts();
   renderOutlets();
-
   $('#year').textContent = new Date().getFullYear();
 }
 
@@ -98,7 +93,7 @@ function renderBrands() {
   $('#brandTotal').textContent = `${data.brands.length} brand`;
 
   el.innerHTML = data.brands.map(b => `
-    <button class="brand-card ${selectedBrand?.id === b.id ? 'selected' : ''}"
+    <button class="brand-card ${selectedBrand?.id == b.id ? 'selected' : ''}"
       data-brand="${b.id}">
       <span class="brand-logo" style="background:${esc(b.color || '#eee5da')}">
         ${b.logo
@@ -191,19 +186,136 @@ function renderProducts() {
 $('#search').addEventListener('input', renderProducts);
 
 // =====================================
-// DETAIL PRODUK DAN KERANJANG
+// DETAIL PRODUK
 // =====================================
 
 function showProduct(id) {
-  currentProduct = data.products.find(p => p.id === id);
+  currentProduct = data.products.find(p => p.id == id);
   if (!currentProduct) return;
 
   qty = 1;
-
   const p = currentProduct;
-  const opts = p.options?.length
-    ? p.options
-    : [{ name: 'Regular', price: 0 }];
+
+  const hasNewOptions = (p.config_options || []).length > 0;
+  const hasNewAddons = (p.config_addons || []).length > 0;
+
+  const optionHtml = hasNewOptions
+    ? p.config_options.map(g => {
+        const single = g.selection_type !== 'MULTIPLE';
+        const required = Number(g.is_required) === 1;
+        const min = required && Number(g.min_select || 0) < 1
+          ? 1
+          : Number(g.min_select || 0);
+
+        return `
+          <div class="option-group config-group"
+            data-kind="option"
+            data-group="${g.id}"
+            data-min="${min}"
+            data-max="${g.max_select ?? ''}"
+            data-single="${single ? 1 : 0}">
+            <h4>
+              ${esc(g.group_name)}
+              ${required || min > 0 ? '<small> · wajib</small>' : '<small> · opsional</small>'}
+            </h4>
+            ${g.description
+              ? `<p class="muted">${esc(g.description)}</p>`
+              : ''}
+            <div class="option-row">
+              ${(g.values || []).map(v => `
+                <label class="option-choice">
+                  <input
+                    type="${single ? 'radio' : 'checkbox'}"
+                    name="option_group_${g.id}"
+                    data-config-option
+                    data-group="${g.id}"
+                    data-id="${v.id}"
+                    data-name="${esc(v.value_name)}"
+                    data-price="${Number(v.price_delta || 0)}">
+                  ${esc(v.value_name)}
+                  ${Number(v.price_delta)
+                    ? `<small> +${rupiah(v.price_delta)}</small>`
+                    : ''}
+                </label>
+              `).join('')}
+            </div>
+          </div>
+        `;
+      }).join('')
+    : `
+      <div class="option-group">
+        <h4>Ukuran</h4>
+        <div class="option-row">
+          ${(p.options?.length
+            ? p.options
+            : [{ name: 'Regular', price: 0 }]
+          ).map((o, i) => `
+            <button class="option-choice ${i === 0 ? 'active' : ''}"
+              data-legacy-option="${i}">
+              ${esc(o.name)}
+              ${o.price ? ` +${rupiah(o.price)}` : ''}
+            </button>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+  const addonHtml = hasNewAddons
+    ? p.config_addons.map(g => {
+        const single = g.selection_type === 'SINGLE';
+
+        return `
+          <div class="option-group config-group"
+            data-kind="addon"
+            data-group="${g.id}"
+            data-min="${Number(g.min_select || 0)}"
+            data-max="${g.max_select ?? ''}"
+            data-single="${single ? 1 : 0}">
+            <h4>${esc(g.group_name)}
+              <small>
+                ${Number(g.min_select || 0) > 0
+                  ? ` · minimal ${g.min_select}`
+                  : ' · opsional'}
+              </small>
+            </h4>
+            ${g.description
+              ? `<p class="muted">${esc(g.description)}</p>`
+              : ''}
+            ${(g.items || []).map(a => `
+              <div class="addon-row">
+                <label>
+                  <input
+                    type="${single ? 'radio' : 'checkbox'}"
+                    name="addon_group_${g.id}"
+                    data-config-addon
+                    data-group="${g.id}"
+                    data-id="${a.id}"
+                    data-name="${esc(a.item_name)}"
+                    data-price="${Number(a.price_delta || 0)}">
+                  ${esc(a.item_name)}
+                </label>
+                <b>+${rupiah(a.price_delta)}</b>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }).join('')
+    : `
+      <div class="option-group">
+        <h4>Add-on <small>· opsional, boleh lebih dari satu</small></h4>
+        ${(p.addons || []).length
+          ? p.addons.map((a, i) => `
+            <div class="addon-row">
+              <label>
+                <input type="checkbox" data-legacy-addon="${i}">
+                ${esc(a.name)}
+              </label>
+              <b>+${rupiah(a.price)}</b>
+            </div>
+          `).join('')
+          : '<p class="muted">Tidak ada add-on.</p>'}
+      </div>
+    `;
 
   $('#productDetail').innerHTML = `
     <span class="eyebrow">${esc(p.category || 'MENU')}</span>
@@ -214,34 +326,10 @@ function showProduct(id) {
     </div>
     <h2>${esc(p.name)}</h2>
     <p class="muted">${esc(p.description || '')}</p>
-    <div class="detail-price">${rupiah(p.price)}</div>
+    <div class="detail-price" id="detailPrice">${rupiah(p.price)}</div>
 
-    <div class="option-group">
-      <h4>Ukuran</h4>
-      <div class="option-row">
-        ${opts.map((o, i) => `
-          <button class="option-choice ${i === 0 ? 'active' : ''}"
-            data-option="${i}">
-            ${esc(o.name)}${o.price ? ` +${rupiah(o.price)}` : ''}
-          </button>
-        `).join('')}
-      </div>
-    </div>
-
-    <div class="option-group">
-      <h4>Add-on <small>· opsional, boleh lebih dari satu</small></h4>
-      ${(p.addons || []).length
-        ? p.addons.map((a, i) => `
-          <div class="addon-row">
-            <label>
-              <input type="checkbox" data-addon="${i}">
-              ${esc(a.name)}
-            </label>
-            <b>+${rupiah(a.price)}</b>
-          </div>
-        `).join('')
-        : '<p class="muted">Tidak ada add-on.</p>'}
-    </div>
+    ${optionHtml}
+    ${addonHtml}
 
     <div class="option-group">
       <h4>Catatan</h4>
@@ -255,55 +343,181 @@ function showProduct(id) {
     </div>
 
     <button id="addToCart" class="primary full">
-      Tambah ke keranjang
+      Tambah ke keranjang · ${rupiah(p.price)}
     </button>
   `;
 
-  $$('[data-option]').forEach(b => {
+  // Pilihan lama
+  $$('[data-legacy-option]').forEach(b => {
     b.onclick = () => {
-      $$('[data-option]').forEach(x => x.classList.remove('active'));
+      $$('[data-legacy-option]').forEach(x => x.classList.remove('active'));
       b.classList.add('active');
+      updateProductPrice();
     };
+  });
+
+  // Semua pilihan baru
+  $$('[data-config-option], [data-config-addon]').forEach(input => {
+    input.addEventListener('change', () => {
+      if (input.type === 'radio' && input.checked) {
+        const group = input.dataset.group;
+        $$(`[name="${input.name}"]`).forEach(x => {
+          x.closest('label')?.classList.toggle('active', x.checked);
+        });
+      }
+
+      if (input.type === 'checkbox') {
+        input.closest('label')?.classList.toggle('active', input.checked);
+      }
+
+      updateProductPrice();
+    });
+  });
+
+  // Pilihan lama add-on
+  $$('[data-legacy-addon]').forEach(input => {
+    input.onchange = updateProductPrice;
   });
 
   $('#qtyMinus').onclick = () => {
     qty = Math.max(1, qty - 1);
     $('#qtyValue').textContent = qty;
+    updateProductPrice();
   };
 
   $('#qtyPlus').onclick = () => {
     qty++;
     $('#qtyValue').textContent = qty;
+    updateProductPrice();
   };
 
   $('#addToCart').onclick = addCurrentToCart;
 
   open('productModal');
+  updateProductPrice();
+}
+
+function selectedConfigInputs(selector) {
+  return $$(selector).filter(x => x.checked);
+}
+
+function currentSelectionPrice() {
+  const p = currentProduct;
+  if (!p) return 0;
+
+  const newOptions = selectedConfigInputs('[data-config-option]');
+  const newAddons = selectedConfigInputs('[data-config-addon]');
+
+  const oldOption = p.config_options?.length
+    ? null
+    : p.options?.[
+        Number($('[data-legacy-option].active')?.dataset.legacyOption || 0)
+      ] || { price: 0 };
+
+  const oldAddons = p.config_addons?.length
+    ? []
+    : (p.addons || []).filter((a, i) =>
+        $(`[data-legacy-addon="${i}"]`)?.checked
+      );
+
+  return Number(p.price || 0)
+    + Number(oldOption?.price || 0)
+    + newOptions.reduce((s, x) => s + Number(x.dataset.price || 0), 0)
+    + newAddons.reduce((s, x) => s + Number(x.dataset.price || 0), 0)
+    + oldAddons.reduce((s, x) => s + Number(x.price || 0), 0);
+}
+
+function updateProductPrice() {
+  if (!currentProduct) return;
+
+  const unit = currentSelectionPrice();
+
+  $('#detailPrice').textContent = rupiah(unit);
+  $('#addToCart').textContent =
+    `Tambah ke keranjang · ${rupiah(unit * qty)}`;
+}
+
+function validateConfigGroups() {
+  const groups = $$('.config-group');
+
+  for (const group of groups) {
+    const selected = group.querySelectorAll(
+      '[data-config-option]:checked, [data-config-addon]:checked'
+    );
+
+    const count = selected.length;
+    const min = Number(group.dataset.min || 0);
+    const max = group.dataset.max === ''
+      ? null
+      : Number(group.dataset.max);
+
+    const name = group.querySelector('h4')?.textContent.trim() || 'Pilihan';
+
+    if (count < min) {
+      toast(`${name}: pilih minimal ${min} pilihan.`);
+      return false;
+    }
+
+    if (max !== null && count > max) {
+      toast(`${name}: maksimal ${max} pilihan.`);
+      return false;
+    }
+
+    if (group.dataset.single === '1' && count > 1) {
+      toast(`${name}: hanya boleh memilih satu.`);
+      return false;
+    }
+  }
+
+  return true;
 }
 
 function addCurrentToCart() {
   const p = currentProduct;
+  if (!p) return;
 
-  const opt = p.options?.[
-    Number($('.option-choice.active')?.dataset.option || 0)
-  ] || { name: 'Regular', price: 0 };
+  if (!validateConfigGroups()) return;
 
-  const addons = (p.addons || []).filter((a, i) =>
-    $(`[data-addon="${i}"]`)?.checked
-  );
+  const newOptions = selectedConfigInputs('[data-config-option]');
+  const newAddons = selectedConfigInputs('[data-config-addon]');
 
-  const note = $('#itemNote').value;
+  const oldOption = p.config_options?.length
+    ? null
+    : p.options?.[
+        Number($('[data-legacy-option].active')?.dataset.legacyOption || 0)
+      ] || { name: 'Regular', price: 0 };
 
-  const unit = Number(p.price) +
-    Number(opt.price || 0) +
-    addons.reduce((s, a) => s + Number(a.price || 0), 0);
+  const oldAddons = p.config_addons?.length
+    ? []
+    : (p.addons || []).filter((a, i) =>
+        $(`[data-legacy-addon="${i}"]`)?.checked
+      );
+
+  const choices = [
+    ...newOptions.map(x => ({
+      group: x.closest('.config-group')?.querySelector('h4')?.textContent.trim() || 'Option',
+      name: x.dataset.name,
+      price: Number(x.dataset.price || 0),
+      kind: 'option'
+    })),
+    ...newAddons.map(x => ({
+      group: x.closest('.config-group')?.querySelector('h4')?.textContent.trim() || 'Add-on',
+      name: x.dataset.name,
+      price: Number(x.dataset.price || 0),
+      kind: 'addon'
+    }))
+  ];
+
+  const unit = currentSelectionPrice();
+  const note = $('#itemNote').value.trim();
 
   cart.push({
     key: Date.now() + Math.random(),
     product_id: p.id,
     name: p.name,
-    option: opt.name,
-    addons,
+    option: oldOption?.name || '',
+    addons: oldAddons,
+    choices,
     note,
     qty,
     unit,
@@ -314,6 +528,10 @@ function addCurrentToCart() {
   close('productModal');
   toast('Menu ditambahkan ke keranjang');
 }
+
+// =====================================
+// KERANJANG
+// =====================================
 
 function updateCart() {
   const count = cart.reduce((s, x) => s + x.qty, 0);
@@ -335,22 +553,38 @@ function renderCart() {
     return;
   }
 
-  el.innerHTML = cart.map(x => `
-    <div class="cart-item">
-      <div>
-        <strong>${esc(x.name)} × ${x.qty}</strong>
-        <small>
-          ${esc(x.option)}
-          ${x.addons.length
-            ? ' · ' + x.addons.map(a => esc(a.name)).join(', ')
-            : ''}
-          ${x.note ? ' · ' + esc(x.note) : ''}
-          <br>${rupiah(x.unit * x.qty)}
-        </small>
+  el.innerHTML = cart.map(x => {
+    const detail = [];
+
+    if (x.option) detail.push(esc(x.option));
+
+    if (x.choices?.length) {
+      x.choices.forEach(c => {
+        detail.push(`${esc(c.group)}: ${esc(c.name)}`);
+      });
+    }
+
+    if (x.addons?.length) {
+      detail.push(
+        'Add-on: ' + x.addons.map(a => esc(a.name)).join(', ')
+      );
+    }
+
+    if (x.note) detail.push('Catatan: ' + esc(x.note));
+
+    return `
+      <div class="cart-item">
+        <div>
+          <strong>${esc(x.name)} × ${x.qty}</strong>
+          <small>
+            ${detail.join('<br>')}
+            <br>${rupiah(x.unit * x.qty)}
+          </small>
+        </div>
+        <button data-remove="${x.key}">Hapus</button>
       </div>
-      <button data-remove="${x.key}">Hapus</button>
-    </div>
-  `).join('');
+    `;
+  }).join('');
 
   $$('[data-remove]').forEach(b => {
     b.onclick = () => {
@@ -386,6 +620,10 @@ $('#pickup').onchange = () => {
   );
 };
 
+// =====================================
+// CHECKOUT WHATSAPP
+// =====================================
+
 $('#sendOrder').onclick = () => {
   if (!cart.length) return toast('Keranjang masih kosong');
 
@@ -395,7 +633,7 @@ $('#sendOrder').onclick = () => {
     return toast('Satu checkout hanya untuk satu brand. Pisahkan pesanan per brand.');
   }
 
-  const brand = data.brands.find(b => b.id === brandIds[0]);
+  const brand = data.brands.find(b => b.id == brandIds[0]);
 
   if (!brand?.whatsapp) {
     return toast('Nomor WhatsApp admin belum diatur');
@@ -419,9 +657,21 @@ $('#sendOrder').onclick = () => {
   msg += '\n\n*DETAIL PESANAN*';
 
   cart.forEach((x, i) => {
-    msg += `\n\n${i + 1}. ${x.name}\n   ${x.option}\n`;
+    msg += `\n\n${i + 1}. ${x.name}\n`;
 
-    if (x.addons.length) {
+    if (x.option) {
+      msg += `   ${x.option}\n`;
+    }
+
+    if (x.choices?.length) {
+      x.choices.forEach(c => {
+        msg += `   ${c.group}: ${c.name}`;
+        if (c.price) msg += ` (+${rupiah(c.price)})`;
+        msg += '\n';
+      });
+    }
+
+    if (x.addons?.length) {
       msg += `   Add-on: ${x.addons.map(a => a.name).join(', ')}\n`;
     }
 
@@ -431,6 +681,7 @@ $('#sendOrder').onclick = () => {
   });
 
   msg += `\n\n*TOTAL: ${rupiah(total)}*`;
+
   msg += `\nWaktu pickup: ${
     $('#pickup').value === 'Atur jam'
       ? $('#pickupTime').value
@@ -480,7 +731,7 @@ $('#loginBtn').onclick = async () => {
 };
 
 // =====================================
-// API ADMIN LAMA
+// API ADMIN
 // =====================================
 
 async function adminPost(action, body) {
@@ -498,21 +749,14 @@ async function adminPost(action, body) {
 
   await load();
   await renderAdmin();
-
   toast('Data berhasil disimpan');
 }
-
-// =====================================
-// API OPTIONS DAN ADD-ONS
-// =====================================
 
 async function loadAdminConfig() {
   if (!adminToken) return;
 
   const r = await fetch('/api/admin-config', {
-    headers: {
-      'Authorization': 'Bearer ' + adminToken
-    }
+    headers: { 'Authorization': 'Bearer ' + adminToken }
   });
 
   const d = await r.json();
@@ -554,16 +798,14 @@ async function adminConfigPost(body) {
 }
 
 // =====================================
-// API HUBUNGAN PRODUK
+// HUBUNGAN PRODUK
 // =====================================
 
 async function loadProductLinks() {
   if (!adminToken) return;
 
   const r = await fetch('/api/product-config', {
-    headers: {
-      'Authorization': 'Bearer ' + adminToken
-    }
+    headers: { 'Authorization': 'Bearer ' + adminToken }
   });
 
   const d = await r.json();
@@ -706,7 +948,6 @@ async function renderAdmin() {
   try {
     await loadAdminConfig();
     await loadProductLinks();
-
     renderConfigLists();
     renderProductLinkForm();
   } catch (e) {
@@ -716,7 +957,7 @@ async function renderAdmin() {
 }
 
 // =====================================
-// DAFTAR OPTIONS DAN ADD-ONS
+// DAFTAR OPTIONS DAN ADD-ONS ADMIN
 // =====================================
 
 function renderConfigLists() {
@@ -878,7 +1119,6 @@ function renderSelectedProductGroups() {
   }
 
   const product = data.products.find(p => p.id == productId);
-
   if (!product) return;
 
   const brandId = Number(product.brand_id);
@@ -953,10 +1193,7 @@ function renderSelectedProductGroups() {
     : '<p class="muted">Belum ada grup Add-ons untuk brand produk ini.</p>';
 }
 
-$('#linkProductSelect').addEventListener('change', () => {
-  renderSelectedProductGroups();
-});
-
+$('#linkProductSelect').addEventListener('change', renderSelectedProductGroups);
 $('#saveProductLinks').onclick = saveProductLinks;
 
 // =====================================
@@ -1152,8 +1389,6 @@ $('#logoutBtn').onclick = () => {
     product_option_groups: [],
     product_addon_groups: []
   };
-
-  close('adminModal');
 };
 
 // =====================================

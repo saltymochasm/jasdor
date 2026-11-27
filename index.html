@@ -18,7 +18,6 @@
     <button id="cartOpen" class="cart-pill">Keranjang <b id="cartCount">0</b></button>
   </nav>
 </header>
-
 <main>
   <section class="hero">
     <div>
@@ -37,7 +36,6 @@
       <div class="art-sticker">ORDER<br>HAPPY ✳</div>
     </div>
   </section>
-
   <section id="brands" class="section">
     <div class="section-head">
       <div>
@@ -48,7 +46,6 @@
     </div>
     <div id="brandList" class="brand-grid"></div>
   </section>
-
   <section id="catalog" class="section catalog-section">
     <div class="section-head">
       <div>
@@ -65,7 +62,6 @@
       <div class="empty">Pilih salah satu brand untuk mulai melihat menu.</div>
     </div>
   </section>
-
   <section class="how">
     <span class="eyebrow">PESAN DALAM 3 LANGKAH</span>
     <div class="how-grid">
@@ -87,7 +83,6 @@
     </div>
   </section>
 </main>
-
 <footer>
   <a class="brandmark" href="/">jasdor<span>.</span></a>
   <span>Pesan lebih mudah, nikmati lebih cepat.</span>
@@ -101,7 +96,6 @@
     <div id="productDetail"></div>
   </div>
 </div>
-
 <!-- CART MODAL -->
 <div id="cartModal" class="overlay hidden">
   <div class="sheet">
@@ -142,14 +136,12 @@
     <p class="fineprint">Pesanan akan dibuka di WhatsApp. Periksa kembali sebelum mengirim.</p>
   </div>
 </div>
-
 <!-- ADMIN MODAL -->
 <div id="adminModal" class="overlay hidden">
   <div class="sheet admin-sheet">
     <button class="close" data-close="adminModal">×</button>
     <span class="eyebrow">AREA PENGELOLA</span>
     <h2>Dashboard Jasdor</h2>
-
     <div id="adminLogin">
       <p class="muted">Masuk untuk mengelola brand, menu, promo, dan outlet.</p>
       <label>Password admin
@@ -158,7 +150,6 @@
       <button id="loginBtn" class="primary full">Masuk dashboard</button>
       <p id="loginError" class="error"></p>
     </div>
-
     <div id="adminPanel" class="hidden">
       <div class="admin-tabs">
         <button class="active" data-tab="brandsAdmin">Brand</button>
@@ -167,7 +158,6 @@
         <button data-tab="addonsAdmin">Add-ons</button>
         <button data-tab="outletsAdmin">Outlet</button>
       </div>
-
       <!-- BRANDS -->
       <section id="brandsAdmin" class="admin-tab">
         <h3>Tambah brand</h3>
@@ -182,7 +172,6 @@
         </form>
         <div id="adminBrandList"></div>
       </section>
-
       <!-- PRODUCTS -->
       <section id="productsAdmin" class="admin-tab hidden">
         <h3>Tambah menu</h3>
@@ -202,7 +191,6 @@
           <button class="primary">Simpan menu</button>
         </form>
         <div id="adminProductList"></div>
-
         <hr>
         <h3>Hubungkan Options & Add-ons ke Produk</h3>
         <p class="muted">
@@ -214,7 +202,6 @@
           <select id="linkProductSelect">
             <option value="">Pilih produk</option>
           </select>
-
           <h4>Grup Options</h4>
           <div id="linkOptionGroups">
             <p class="muted">Pilih produk terlebih dahulu.</p>
@@ -224,7 +211,6 @@
           <div id="linkAddonGroups">
             <p class="muted">Pilih produk terlebih dahulu.</p>
           </div>
-
           <button type="button" class="primary" id="saveProductLinks">
             Simpan hubungan produk
           </button>
@@ -236,7 +222,6 @@
       <section id="optionsAdmin" class="admin-tab hidden">
         <h3>Kelola Options</h3>
         <p class="muted">Buat grup pilihan dan nilai yang dapat digunakan pada produk.</p>
-
         <h4>Tambah grup Options</h4>
         <form id="optionGroupForm" class="admin-form">
           <select name="brand_id" required>
@@ -258,7 +243,6 @@
           <textarea name="description" placeholder="Keterangan grup (opsional)"></textarea>
           <button class="primary">Simpan grup Options</button>
         </form>
-
         <h4>Tambah nilai Option</h4>
         <form id="optionItemForm" class="admin-form">
           <select name="group_id" required>
@@ -271,12 +255,10 @@
         </form>
         <div id="adminOptionList"></div>
       </section>
-
       <!-- ADD-ONS -->
       <section id="addonsAdmin" class="admin-tab hidden">
         <h3>Kelola Add-ons</h3>
         <p class="muted">Buat grup tambahan dan item yang dapat dipilih pelanggan.</p>
-
         <h4>Tambah grup Add-ons</h4>
         <form id="addonGroupForm" class="admin-form">
           <select name="brand_id" required>
@@ -294,7 +276,6 @@
           <textarea name="description" placeholder="Keterangan grup (opsional)"></textarea>
           <button class="primary">Simpan grup Add-ons</button>
         </form>
-
         <h4>Tambah item Add-on</h4>
         <form id="addonItemForm" class="admin-form">
           <select name="group_id" required>
@@ -307,7 +288,6 @@
         </form>
         <div id="adminAddonList"></div>
       </section>
-
       <!-- OUTLETS -->
       <section id="outletsAdmin" class="admin-tab hidden">
         <h3>Tambah outlet</h3>
@@ -320,7 +300,6 @@
         </form>
         <div id="adminOutletList"></div>
       </section>
-
       <button id="logoutBtn" class="secondary full">Keluar dashboard</button>
     </div>
   </div>
@@ -328,5 +307,6 @@
 
 <div id="toast" class="toast"></div>
 <script src="/app.js"></script>
+<script src="/bundles.js"></script>
 </body>
 </html>

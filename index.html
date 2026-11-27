@@ -9,7 +9,6 @@
 <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
-
 <header class="topbar">
   <a class="brandmark" href="/">jasdor<span>.</span></a>
   <nav>
@@ -110,7 +109,6 @@
     <span class="eyebrow">RINGKASAN PESANAN</span>
     <h2>Keranjangmu</h2>
     <div id="cartItems"></div>
-
     <div class="checkout-form">
       <label>Nama pemesan
         <input id="customerName" placeholder="Nama kamu">
@@ -136,7 +134,6 @@
         <textarea id="orderNote" placeholder="Catatan tambahan untuk admin"></textarea>
       </label>
     </div>
-
     <div class="total-line">
       <span>Total</span>
       <strong id="cartTotal">Rp0</strong>
@@ -163,8 +160,6 @@
     </div>
 
     <div id="adminPanel" class="hidden">
-
-      <!-- ADMIN NAVIGATION -->
       <div class="admin-tabs">
         <button class="active" data-tab="brandsAdmin">Brand</button>
         <button data-tab="productsAdmin">Menu</button>
@@ -199,14 +194,42 @@
           <input name="compare_price" type="number" min="0" placeholder="Harga sebelum diskon (opsional)">
           <input name="image" placeholder="URL foto menu">
           <textarea name="description" placeholder="Deskripsi menu"></textarea>
-          <input name="options" placeholder="Opsi, pisahkan koma (Regular, Large:5000)">
-          <input name="addons" placeholder="Add-on, contoh Extra shot:6000, Oreo:4000">
+          <input name="options" placeholder="Opsi lama, pisahkan koma (Regular, Large:5000)">
+          <input name="addons" placeholder="Add-on lama, contoh Extra shot:6000, Oreo:4000">
           <label class="inline">
             <input name="active" type="checkbox" checked> Menu aktif
           </label>
           <button class="primary">Simpan menu</button>
         </form>
         <div id="adminProductList"></div>
+
+        <hr>
+        <h3>Hubungkan Options & Add-ons ke Produk</h3>
+        <p class="muted">
+          Pilih produk untuk mengatur grup pilihan yang berlaku pada produk tersebut.
+        </p>
+
+        <div id="productConfigForm" class="admin-form">
+          <label>Pilih produk</label>
+          <select id="linkProductSelect">
+            <option value="">Pilih produk</option>
+          </select>
+
+          <h4>Grup Options</h4>
+          <div id="linkOptionGroups">
+            <p class="muted">Pilih produk terlebih dahulu.</p>
+          </div>
+
+          <h4>Grup Add-ons</h4>
+          <div id="linkAddonGroups">
+            <p class="muted">Pilih produk terlebih dahulu.</p>
+          </div>
+
+          <button type="button" class="primary" id="saveProductLinks">
+            Simpan hubungan produk
+          </button>
+          <p id="productLinksStatus" class="muted"></p>
+        </div>
       </section>
 
       <!-- OPTIONS -->
@@ -220,18 +243,15 @@
             <option value="">Pilih brand</option>
           </select>
           <input name="group_name" placeholder="Nama grup, contoh Size" required>
-
           <label>Tipe pilihan</label>
           <select name="selection_type">
             <option value="SINGLE">Pilih satu</option>
             <option value="MULTIPLE">Bisa pilih beberapa</option>
           </select>
-
           <label class="inline">
             <input name="is_required" type="checkbox">
             Wajib dipilih
           </label>
-
           <input name="min_select" type="number" min="0" value="0" placeholder="Minimal pilihan">
           <input name="max_select" type="number" min="0" placeholder="Maksimal pilihan (kosong = tanpa batas)">
           <input name="display_order" type="number" value="0" placeholder="Urutan tampil">
@@ -249,7 +269,6 @@
           <input name="sort_order" type="number" value="0" placeholder="Urutan tampil">
           <button class="primary">Simpan nilai Option</button>
         </form>
-
         <div id="adminOptionList"></div>
       </section>
 
@@ -264,13 +283,11 @@
             <option value="">Pilih brand</option>
           </select>
           <input name="group_name" placeholder="Nama grup, contoh Topping" required>
-
           <label>Tipe pilihan</label>
           <select name="selection_type">
             <option value="MULTIPLE">Bisa pilih beberapa</option>
             <option value="SINGLE">Pilih satu</option>
           </select>
-
           <input name="min_select" type="number" min="0" value="0" placeholder="Minimal pilihan">
           <input name="max_select" type="number" min="0" placeholder="Maksimal pilihan (kosong = tanpa batas)">
           <input name="display_order" type="number" value="0" placeholder="Urutan tampil">
@@ -288,7 +305,6 @@
           <input name="sort_order" type="number" value="0" placeholder="Urutan tampil">
           <button class="primary">Simpan item Add-on</button>
         </form>
-
         <div id="adminAddonList"></div>
       </section>
 
@@ -311,7 +327,6 @@
 </div>
 
 <div id="toast" class="toast"></div>
-
 <script src="/app.js"></script>
 </body>
 </html>

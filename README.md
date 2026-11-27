@@ -144,3 +144,24 @@ URL awal akan berbentuk `https://jasdor.pages.dev` (nama subdomain bergantung ke
 - Pages Functions: <https://developers.cloudflare.com/pages/functions/get-started/>
 - Pages bindings (D1): <https://developers.cloudflare.com/pages/functions/bindings/>
 - D1 limits: <https://developers.cloudflare.com/d1/platform/limits/>
+
+
+## Catatan paket backend yang dilengkapi
+
+Folder `functions/api/` sekarang berisi:
+- `data.js`: endpoint publik `GET /api/data` untuk membaca brand, produk, outlet, dan opsi/add-on lama.
+- `admin.js`: endpoint `POST /api/admin?action=...` untuk login, menambah brand/menu/outlet, dan menghapus data.
+- `_lib.js`: helper query D1, normalisasi data, serta token admin HMAC 8 jam.
+
+### Pengaturan Cloudflare yang harus dipastikan
+
+1. Di Pages → Settings → Bindings, pastikan D1 binding bernama `DB` menunjuk ke database `jasdor-db`.
+2. Di Pages → Settings → Variables and Secrets, tambahkan secret `ADMIN_PASSWORD` dengan password panjang dan unik.
+3. Setelah mengubah binding/secret, lakukan redeploy.
+4. `wrangler.toml` tidak lagi menyimpan `database_id` placeholder. Binding yang sudah ada di Dashboard menjadi sumber konfigurasi production.
+
+### Batasan yang belum selesai
+
+Paket ini memulihkan API yang dirujuk oleh frontend MVP. Fitur import Excel, upload foto, CRUD edit, pengelolaan grup Options/Add-ons tingkat lanjut, bundling dan aturan biaya per bundling, serta import outlet OSM belum diimplementasikan pada tahap ini. Jangan menganggap fitur tersebut sudah tersedia hanya karena fondasi API sudah ditambahkan.
+
+Sebelum deploy, lakukan backup D1. API memakai tabel yang sudah ada (`brands`, `products`, `outlets`, `product_options`, `addons`) dan menyesuaikan beberapa variasi nama kolom yang dikenal. Jika skema tabel aktual berbeda, endpoint akan menampilkan pesan error agar dapat diperbaiki tanpa menghapus data.

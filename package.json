@@ -1,6 +1,6 @@
 {
   "name": "jasdor",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "private": true,
   "description": "Jasdor multibrand ordering webapp on Cloudflare Pages and D1",
   "scripts": {
@@ -8,7 +8,8 @@
     "deploy": "wrangler pages deploy .",
     "db:create": "wrangler d1 create jasdor-db",
     "db:migrate:local": "wrangler d1 execute jasdor-db --local --file=migrations/0001_init.sql",
-    "db:migrate:remote": "wrangler d1 execute jasdor-db --remote --file=migrations/0001_init.sql"
+    "db:migrate:remote": "wrangler d1 execute jasdor-db --remote --file=migrations/0001_init.sql",
+    "check:files": "node --check functions/api/_lib.js && node --check functions/api/data.js && node --check functions/api/admin.js"
   },
   "devDependencies": {
     "wrangler": "^4.0.0"

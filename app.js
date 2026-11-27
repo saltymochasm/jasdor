@@ -12,11 +12,17 @@ let cart = [];
 let currentProduct = null;
 let adminToken = null;
 let qty = 1;
+
 let configData = {
   option_groups: [],
   option_values: [],
   addon_groups: [],
   addon_items: []
+};
+
+let productLinks = {
+  product_option_groups: [],
+  product_addon_groups: []
 };
 
 const $ = s => document.querySelector(s);
@@ -66,7 +72,9 @@ async function load() {
   try {
     const r = await fetch('/api/data');
     if (!r.ok) throw new Error('Gagal memuat katalog');
+
     const d = await r.json();
+
     data = {
       brands: d.brands || [],
       products: d.products || [],
@@ -86,6 +94,7 @@ async function load() {
 
 function renderBrands() {
   const el = $('#brandList');
+
   $('#brandTotal').textContent = `${data.brands.length} brand`;
 
   el.innerHTML = data.brands.map(b => `
@@ -190,6 +199,7 @@ function showProduct(id) {
   if (!currentProduct) return;
 
   qty = 1;
+
   const p = currentProduct;
   const opts = p.options?.length
     ? p.options
@@ -267,11 +277,13 @@ function showProduct(id) {
   };
 
   $('#addToCart').onclick = addCurrentToCart;
+
   open('productModal');
 }
 
 function addCurrentToCart() {
   const p = currentProduct;
+
   const opt = p.options?.[
     Number($('.option-choice.active')?.dataset.option || 0)
   ] || { name: 'Regular', price: 0 };
@@ -305,6 +317,7 @@ function addCurrentToCart() {
 
 function updateCart() {
   const count = cart.reduce((s, x) => s + x.qty, 0);
+
   $('#cartCount').textContent = count;
 
   $('#cartTotal').textContent = rupiah(
@@ -425,6 +438,7 @@ $('#sendOrder').onclick = () => {
   }`;
 
   if (outlet) msg += `\nOutlet: ${outlet.name}`;
+
   if ($('#orderNote').value) {
     msg += `\nCatatan pesanan: ${$('#orderNote').value}`;
   }
@@ -484,11 +498,12 @@ async function adminPost(action, body) {
 
   await load();
   await renderAdmin();
+
   toast('Data berhasil disimpan');
 }
 
 // =====================================
-// API OPTIONS DAN ADD-ONS BARU
+// API OPTIONS DAN ADD-ONS
 // =====================================
 
 async function loadAdminConfig() {
@@ -532,7 +547,84 @@ async function adminConfigPost(body) {
 
   await loadAdminConfig();
   renderConfigLists();
+  await loadProductLinks();
+  renderProductLinkForm();
+
   toast('Konfigurasi berhasil disimpan');
+}
+
+// =====================================
+// API HUBUNGAN PRODUK
+// =====================================
+
+async function loadProductLinks() {
+  if (!adminToken) return;
+
+  const r = await fetch('/api/product-config', {
+    headers: {
+      'Authorization': 'Bearer ' + adminToken
+    }
+  });
+
+  const d = await r.json();
+
+  if (!r.ok) {
+    throw Error(d.error || 'Gagal membaca hubungan produk');
+  }
+
+  productLinks = {
+    product_option_groups: d.product_option_groups || [],
+    product_addon_groups: d.product_addon_groups || []
+  };
+}
+
+async function saveProductLinks() {
+  const productId = Number($('#linkProductSelect').value);
+
+  if (!productId) {
+    return toast('Pilih produk terlebih dahulu');
+  }
+
+  const optionIds = $$('[name="linked_option_group"]:checked')
+    .map(el => Number(el.value));
+
+  const addonIds = $$('[name="linked_addon_group"]:checked')
+    .map(el => Number(el.value));
+
+  const status = $('#productLinksStatus');
+  status.textContent = 'Menyimpan hubungan produk...';
+
+  try {
+    const r = await fetch('/api/product-config', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer ' + adminToken
+      },
+      body: JSON.stringify({
+        product_id: productId,
+        option_group_ids: optionIds,
+        addon_group_ids: addonIds
+      })
+    });
+
+    const d = await r.json();
+
+    if (!r.ok) {
+      throw Error(d.error || 'Gagal menyimpan hubungan produk');
+    }
+
+    await loadProductLinks();
+    renderProductLinkForm();
+
+    status.textContent =
+      `Berhasil disimpan: ${d.option_groups_saved} grup Options dan ${d.addon_groups_saved} grup Add-ons.`;
+
+    toast('Hubungan produk berhasil disimpan');
+  } catch (e) {
+    status.textContent = e.message;
+    toast(e.message);
+  }
 }
 
 // =====================================
@@ -581,7 +673,7 @@ async function renderAdmin() {
         <b>${esc(p.name)}</b><br>
         <small>
           ${rupiah(p.price)} ·
-          ${esc(data.brands.find(b => b.id === p.brand_id)?.name || '')}
+          ${esc(data.brands.find(b => b.id == p.brand_id)?.name || '')}
         </small>
       </span>
       <button data-del="product:${p.id}">Hapus</button>
@@ -613,7 +705,10 @@ async function renderAdmin() {
 
   try {
     await loadAdminConfig();
+    await loadProductLinks();
+
     renderConfigLists();
+    renderProductLinkForm();
   } catch (e) {
     console.error(e);
     toast('Gagal memuat konfigurasi: ' + e.message);
@@ -633,17 +728,13 @@ function renderConfigLists() {
   $('#optionItemForm [name="group_id"]').innerHTML =
     '<option value="">Pilih grup Options</option>' +
     optionGroups.map(g => `
-      <option value="${g.id}">
-        ${esc(g.group_name)}
-      </option>
+      <option value="${g.id}">${esc(g.group_name)}</option>
     `).join('');
 
   $('#addonItemForm [name="group_id"]').innerHTML =
     '<option value="">Pilih grup Add-ons</option>' +
     addonGroups.map(g => `
-      <option value="${g.id}">
-        ${esc(g.group_name)}
-      </option>
+      <option value="${g.id}">${esc(g.group_name)}</option>
     `).join('');
 
   $('#adminOptionList').innerHTML = optionGroups.length
@@ -739,6 +830,134 @@ function renderConfigLists() {
     };
   });
 }
+
+// =====================================
+// FORM HUBUNGAN PRODUK
+// =====================================
+
+function renderProductLinkForm() {
+  const select = $('#linkProductSelect');
+  const previous = select.value;
+
+  select.innerHTML =
+    '<option value="">Pilih produk</option>' +
+    data.products.map(p => {
+      const brand = data.brands.find(b => b.id == p.brand_id);
+
+      return `
+        <option value="${p.id}">
+          ${esc(brand?.name || '')} — ${esc(p.name)}
+        </option>
+      `;
+    }).join('');
+
+  if (data.products.some(p => String(p.id) === previous)) {
+    select.value = previous;
+  }
+
+  renderSelectedProductGroups();
+}
+
+function renderSelectedProductGroups() {
+  const productId = Number($('#linkProductSelect').value);
+
+  const optionContainer = $('#linkOptionGroups');
+  const addonContainer = $('#linkAddonGroups');
+  const status = $('#productLinksStatus');
+
+  status.textContent = '';
+
+  if (!productId) {
+    optionContainer.innerHTML =
+      '<p class="muted">Pilih produk terlebih dahulu.</p>';
+
+    addonContainer.innerHTML =
+      '<p class="muted">Pilih produk terlebih dahulu.</p>';
+
+    return;
+  }
+
+  const product = data.products.find(p => p.id == productId);
+
+  if (!product) return;
+
+  const brandId = Number(product.brand_id);
+
+  const options = configData.option_groups.filter(
+    g => Number(g.brand_id) === brandId && Number(g.is_active) !== 0
+  );
+
+  const addons = configData.addon_groups.filter(
+    g => Number(g.brand_id) === brandId && Number(g.is_active) !== 0
+  );
+
+  const linkedOptions = productLinks.product_option_groups
+    .filter(x => Number(x.product_id) === productId)
+    .map(x => Number(x.option_group_id));
+
+  const linkedAddons = productLinks.product_addon_groups
+    .filter(x => Number(x.product_id) === productId)
+    .map(x => Number(x.addon_group_id));
+
+  optionContainer.innerHTML = options.length
+    ? options.map(g => {
+        const values = configData.option_values.filter(
+          v => Number(v.option_group_id) === Number(g.id)
+        );
+
+        return `
+          <label class="inline" style="display:flex;align-items:flex-start;gap:8px;margin:10px 0">
+            <input
+              type="checkbox"
+              name="linked_option_group"
+              value="${g.id}"
+              ${linkedOptions.includes(Number(g.id)) ? 'checked' : ''}
+            >
+            <span>
+              <b>${esc(g.group_name)}</b><br>
+              <small class="muted">
+                ${g.selection_type === 'MULTIPLE' ? 'Bisa pilih beberapa' : 'Pilih satu'}
+                · ${Number(g.is_required) ? 'Wajib' : 'Opsional'}
+                · ${values.length} pilihan
+              </small>
+            </span>
+          </label>
+        `;
+      }).join('')
+    : '<p class="muted">Belum ada grup Options untuk brand produk ini.</p>';
+
+  addonContainer.innerHTML = addons.length
+    ? addons.map(g => {
+        const items = configData.addon_items.filter(
+          a => Number(a.addon_group_id) === Number(g.id)
+        );
+
+        return `
+          <label class="inline" style="display:flex;align-items:flex-start;gap:8px;margin:10px 0">
+            <input
+              type="checkbox"
+              name="linked_addon_group"
+              value="${g.id}"
+              ${linkedAddons.includes(Number(g.id)) ? 'checked' : ''}
+            >
+            <span>
+              <b>${esc(g.group_name)}</b><br>
+              <small class="muted">
+                ${g.selection_type === 'SINGLE' ? 'Pilih satu' : 'Bisa pilih beberapa'}
+                · ${items.length} item
+              </small>
+            </span>
+          </label>
+        `;
+      }).join('')
+    : '<p class="muted">Belum ada grup Add-ons untuk brand produk ini.</p>';
+}
+
+$('#linkProductSelect').addEventListener('change', () => {
+  renderSelectedProductGroups();
+});
+
+$('#saveProductLinks').onclick = saveProductLinks;
 
 // =====================================
 // FORM BRAND, PRODUK, OUTLET
@@ -929,8 +1148,16 @@ $('#logoutBtn').onclick = () => {
     addon_items: []
   };
 
+  productLinks = {
+    product_option_groups: [],
+    product_addon_groups: []
+  };
+
   close('adminModal');
 };
 
+// =====================================
 // MULAI APLIKASI
+// =====================================
+
 load();
